@@ -17,7 +17,7 @@ import common = require('./common');
 import {DepTree} from '../types';
 import gemfileLockToDependencies = require('../../lib/plugins/rubygems/gemfile-lock-to-dependencies');
 import {convertTestDepGraphResultToLegacy, AnnotatedIssue, LegacyVulnApiResult, TestDepGraphResponse} from './legacy';
-import {SingleDepRootResult, MultiDepRootsResult, isMultiResult, TestOptions} from '../types';
+import {SingleInspectResult, MultiInspectResult, isMultiResult, TestOptions} from '../types';
 import {NoSupportedManifestsFoundError} from '../errors';
 
 // tslint:disable-next-line:no-var-requires
@@ -190,7 +190,7 @@ function assemblePayloads(root: string, options): Promise<Payload[]> {
 }
 
 // Force getDepsFromPlugin to return depRoots for processing in assembleLocalPayload
-async function getDepsFromPlugin(root, options: TestOptions): Promise<MultiDepRootsResult> {
+async function getDepsFromPlugin(root, options: TestOptions): Promise<MultiInspectResult> {
   options.file = options.file || detect.detectPackageFile(root);
   if (!options.docker && !(options.file || options.packageManager)) {
     throw NoSupportedManifestsFoundError([...root]);
@@ -198,7 +198,7 @@ async function getDepsFromPlugin(root, options: TestOptions): Promise<MultiDepRo
   const plugin = plugins.loadPlugin(options.packageManager, options);
   const moduleInfo = ModuleInfo(plugin, options.policy);
   const pluginOptions = plugins.getPluginOptions(options.packageManager, options);
-  const inspectRes: SingleDepRootResult | MultiDepRootsResult =
+  const inspectRes: SingleInspectResult | MultiInspectResult =
     await moduleInfo.inspect(root, options.file, { ...options, ...pluginOptions });
 
   if (!isMultiResult(inspectRes)) {

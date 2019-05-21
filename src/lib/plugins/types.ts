@@ -1,23 +1,23 @@
-export interface InspectResult {
-  plugin: {
-    name: string;
-    runtime?: string;
-  };
-  package: any;
-}
+import * as types from '../../lib/types';
 
 export interface Options {
   file?: string;
   docker?: boolean;
-  traverseNodeModules?: boolean;
   dev?: boolean;
-  strictOutOfSync?: boolean | 'true' | 'false';
-  multiDepRoots?: boolean;
   debug?: boolean;
   packageManager?: string;
   _doubleDashArgs?: string[];
 }
 
+export interface NodejsPluginOptions extends Options {
+  traverseNodeModules?: boolean;
+  strictOutOfSync?: boolean | 'true' | 'false';
+}
+
+export interface GradlePluginOptions extends Options {
+  multiDepRoots?: boolean;
+}
+
 export interface Plugin {
-  inspect: (root: string, targetFile: string, options?: Options) => Promise<InspectResult>;
+  inspect: (root: string, targetFile: string, options?: Options) => Promise<types.SingleInspectResult>;
 }

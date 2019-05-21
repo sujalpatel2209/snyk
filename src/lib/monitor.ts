@@ -6,7 +6,7 @@ import * as os from 'os';
 import * as _ from 'lodash';
 import {isCI} from './is-ci';
 import * as analytics from './analytics';
-import { SingleDepRootResult, MonitorError } from './types';
+import { SingleInspectResult, MonitorError } from './types';
 import * as projectMetadata from './project-metadata';
 import * as path from 'path';
 
@@ -39,7 +39,7 @@ interface Meta {
   projectName: string;
 }
 
-export function monitor(root, meta, info: SingleDepRootResult, targetFile): Promise<any> {
+export function monitor(root, meta, info: SingleInspectResult, targetFile): Promise<any> {
   const pkg = info.package;
   const pluginMeta = info.plugin;
   let policyPath = meta['policy-path'];

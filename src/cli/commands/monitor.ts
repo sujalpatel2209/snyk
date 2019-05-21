@@ -15,7 +15,7 @@ import * as detect from '../../lib/detect';
 import * as plugins from '../../lib/plugins';
 import {ModuleInfo} from '../../lib/module-info';
 import * as docker from '../../lib/docker-promotion';
-import {SingleDepRootResult, MultiDepRootsResult, isMultiResult, MonitorError } from '../../lib/types';
+import {SingleInspectResult, MultiInspectResult, isMultiResult, MonitorError } from '../../lib/types';
 import {SupportedPackageManagers} from '../../lib/package-managers';
 
 const SEPARATOR = '\n-------------------------------------------------------\n';
@@ -84,13 +84,20 @@ async function monitor(...args0: any[]): Promise<any> {
           '"' + path + '" is not a valid path for "snyk monitor"');
       }
 
-      let packageManager: SupportedPackageManagers = detect.detectPackageManager(path, options);
+      let packageManager: SupportedPackageManagers | undefined = detect.detectPackageManager(path, options);
 
-      const targetFile = options.docker && !options.file // snyk monitor --docker (without --file)
-        ? undefined
-        : (options.file || detect.detectPackageFile(path));
+      let targetFile;
+      let plugin;
+      let pluginOptions;
+      if (options.docker) {
+        plugin = plugins.loadDockerPlugin(options);
+      }
 
-      const plugin = plugins.loadPlugin(packageManager, options);
+      if (packageManager) {
+        targetFile = options.file || detect.detectPackageFile(path);
+        plugin = plugins.loadPlugin(packageManager, options);
+        pluginOptions = plugins.getPluginOptions(packageManager, options);
+      }
 
       const moduleInfo = ModuleInfo(plugin, options.policy);
 
@@ -107,12 +114,8 @@ async function monitor(...args0: any[]): Promise<any> {
 
       await spinner(analyzingDepsSpinnerLabel);
 
-      // Scan the project dependencies via a plugin
-
-      const pluginOptions = plugins.getPluginOptions(packageManager, options);
-
       // TODO: the type should depend on multiDepRoots flag
-      const inspectResult: SingleDepRootResult|MultiDepRootsResult = await promiseOrCleanup(
+      const inspectResult: SingleInspectResult|MultiInspectResult = await promiseOrCleanup(
           moduleInfo.inspect(path, targetFile, { ...options, ...pluginOptions }),
           spinner.clear(analyzingDepsSpinnerLabel));
 
@@ -132,10 +135,10 @@ async function monitor(...args0: any[]): Promise<any> {
 
       // We send results from "all-sub-projects" scanning as different Monitor objects
 
-      // SingleDepRootResult is a legacy format understood by Registry, so we have to convert
-      // a MultiDepRootsResult to an array of these.
+      // SingleInspectResult is a legacy format understood by Registry, so we have to convert
+      // a MultiInspectResult to an array of these.
 
-      let perDepRootResults: SingleDepRootResult[] = [];
+      let perDepRootResults: SingleInspectResult[] = [];
       let advertiseSubprojectsCount: number | null = null;
       if (isMultiResult(inspectResult)) {
         perDepRootResults = inspectResult.depRoots.map(
@@ -150,7 +153,7 @@ async function monitor(...args0: any[]): Promise<any> {
         perDepRootResults = [inspectResult];
       }
 
-      // Post the project dependencies to the Registry
+      // Post the project dependencies to Registry
       for (const depRootDeps of perDepRootResults) {
         const res = await promiseOrCleanup(
           snykMonitor(path, meta, depRootDeps, targetFile),
@@ -168,7 +171,7 @@ async function monitor(...args0: any[]): Promise<any> {
         const manageUrl = url.format(endpoint);
 
         endpoint.pathname = leader + '/monitor/' + res.id;
-        const subProjectName = ((inspectResult as MultiDepRootsResult).depRoots)
+        const subProjectName = ((inspectResult as unknown as MultiInspectResult).depRoots)
           ? depRootDeps.package.name
           : undefined;
         const monOutput = formatMonitorOutput(
@@ -231,7 +234,7 @@ async function monitor(...args0: any[]): Promise<any> {
 }
 
 function formatMonitorOutput(
-    packageManager: SupportedPackageManagers, res, manageUrl, options,
+    packageManager: SupportedPackageManagers | undefined, res, manageUrl, options,
     subProjectName?: string, advertiseSubprojectsCount?: number|null,
   ) {
   const issues = res.licensesPolicy ? 'issues' : 'vulnerabilities';

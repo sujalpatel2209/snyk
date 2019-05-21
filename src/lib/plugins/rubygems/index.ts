@@ -1,16 +1,8 @@
 import {inspectors, Spec} from './inspectors';
-import * as types from '../types';
+import * as types from '../../../lib/types';
 import {MissingTargetFileError} from '../../errors/missing-targetfile-error';
 
-interface RubyGemsInspectResult extends types.InspectResult {
-  package: {
-    name: string;
-    targetFile: string;
-    files: any
-  };
-}
-
-export async function inspect(root: string, targetFile: string): Promise<RubyGemsInspectResult> {
+export async function inspect(root: string, targetFile: string): Promise<types.SingleInspectResult> {
   if (!targetFile ) {
     throw MissingTargetFileError(root);
   }
@@ -20,11 +12,13 @@ export async function inspect(root: string, targetFile: string): Promise<RubyGem
     plugin: {
       name: 'bundled:rubygems',
       runtime: 'unknown',
+      packageManager: 'rubygems',
     },
     package: {
       name: specs.packageName,
       targetFile: specs.targetFile,
       files: specs.files,
+      version: '0.0.0',
     },
   };
 }

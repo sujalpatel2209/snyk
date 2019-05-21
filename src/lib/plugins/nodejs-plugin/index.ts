@@ -1,10 +1,12 @@
 import * as modulesParser from './npm-modules-parser';
 import * as lockParser from './npm-lock-parser';
-import * as types from '../types';
+import * as types from '../../../lib/types';
+import {NodejsPluginOptions} from '../types';
+
 import { MissingTargetFileError } from '../../errors/missing-targetfile-error';
 
-export async function inspect(root: string, targetFile: string, options: types.Options = {}):
-Promise<types.InspectResult> {
+export async function inspect(root: string, targetFile: string, options: NodejsPluginOptions = {}):
+Promise<types.SingleInspectResult> {
   if (!targetFile ) {
     throw MissingTargetFileError(root);
   }

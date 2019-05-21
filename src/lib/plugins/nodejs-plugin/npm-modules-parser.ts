@@ -4,9 +4,9 @@ import * as spinner from '../../spinner';
 import * as analytics from '../../analytics';
 import * as fs from 'then-fs';
 import {PkgTree} from 'snyk-nodejs-lockfile-parser';
-import {Options} from '../types';
+import {NodejsPluginOptions} from '../types';
 
-export async function parse(root: string, targetFile: string, options: Options): Promise<PkgTree> {
+export async function parse(root: string, targetFile: string, options: NodejsPluginOptions): Promise<PkgTree> {
   const nodeModulesPath = path.join(
     path.dirname(path.resolve(root, targetFile)),
     'node_modules',

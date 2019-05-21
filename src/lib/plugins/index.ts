@@ -58,15 +58,20 @@ export function loadPlugin(packageManager: SupportedPackageManagers,
   }
 }
 
+export function loadDockerPlugin(options: types.Options = {}): types.Plugin {
+  return dockerPlugin;
+}
+
 export function getPluginOptions(packageManager: SupportedPackageManagers, options: types.Options):
   types.Options {
   const pluginOptions: types.Options = {};
   switch (packageManager) {
     case 'gradle': {
+      const gradlePluginOptions: types.GradlePluginOptions = pluginOptions;
       if (options['all-sub-projects']) {
-        pluginOptions.multiDepRoots = true;
+        gradlePluginOptions.multiDepRoots = true;
       }
-      return pluginOptions;
+      return gradlePluginOptions;
     }
     default: {
       return pluginOptions;
