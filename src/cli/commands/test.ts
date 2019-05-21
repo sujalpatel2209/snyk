@@ -11,6 +11,7 @@ import * as docker from '../../lib/docker-promotion';
 import * as Debug from 'debug';
 import {TestOptions} from '../../lib/types';
 import {isLocalFolder} from '../../lib/detect';
+import {SupportedPackageManagers} from '../../lib/package-managers';
 
 const debug = Debug('snyk');
 const SEPARATOR = '\n-------------------------------------------------------\n';
@@ -200,7 +201,7 @@ function summariseErrorResults(errorResults) {
 function displayResult(res, options: TestOptions & OptionsAtDisplayStage) {
   const meta = metaForDisplay(res, options) + '\n\n';
   const dockerAdvice = dockerRemediationForDisplay(res);
-  const packageManager = options.packageManager;
+  const packageManager: SupportedPackageManagers = options.packageManager;
   options.canSuggestRemediation = isLocalFolder(options.path);
   const prefix = chalk.bold.white('\nTesting ' + options.path + '...\n\n');
 
@@ -412,7 +413,7 @@ function createFixedInText(vuln: any): string {
     : '';
 }
 
-function createRemediationText(vuln, packageManager) {
+function createRemediationText(vuln, packageManager: SupportedPackageManagers) {
   const packageName = vuln.metadata.name;
   let wizardHintText = '';
   if (WIZARD_SUPPORTED_PMS.indexOf(packageManager) > -1) {
@@ -535,7 +536,7 @@ function rightPadWithSpaces(s, desiredLength) {
 
 function metaForDisplay(res, options) {
   const padToLength = 19; // chars to align
-  const packageManager = options.packageManager || res.packageManager;
+  const packageManager: SupportedPackageManagers = options.packageManager || res.packageManager;
   const openSource = res.isPrivate ? 'no' : 'yes';
   const meta = [
     chalk.bold(rightPadWithSpaces('Organisation: ', padToLength)) + res.org,

@@ -15,6 +15,7 @@ export interface Options {
   multiDepRoots?: boolean;
   debug?: boolean;
   packageManager?: string;
+  _doubleDashArgs?: string[];
 }
 
 export interface Plugin {

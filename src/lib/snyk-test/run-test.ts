@@ -18,7 +18,7 @@ import {DepTree} from '../types';
 import gemfileLockToDependencies = require('../../lib/plugins/rubygems/gemfile-lock-to-dependencies');
 import {convertTestDepGraphResultToLegacy, AnnotatedIssue, LegacyVulnApiResult, TestDepGraphResponse} from './legacy';
 import {SingleDepRootResult, MultiDepRootsResult, isMultiResult, TestOptions} from '../types';
-import { NoSupportedManifestsFoundError } from '../errors';
+import {NoSupportedManifestsFoundError} from '../errors';
 
 // tslint:disable-next-line:no-var-requires
 const debug = require('debug')('snyk');

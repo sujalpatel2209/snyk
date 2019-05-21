@@ -1,4 +1,3 @@
-import * as depGraphLib from '@snyk/dep-graph';
 import { SupportedPackageManagers } from './package-managers';
 
 // TODO(kyegupov): use a shared repository snyk-cli-interface
@@ -6,7 +5,7 @@ import { SupportedPackageManagers } from './package-managers';
 export interface PluginMetadata {
   name: string;
   packageFormatVersion?: string;
-  packageManager: string;
+  packageManager: SupportedPackageManagers;
   imageLayers?: any;
   targetFile?: string; // this is wrong (because Shaun said it)
   runtime?: any;

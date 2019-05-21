@@ -62,7 +62,8 @@ export function isPathToPackageFile(path) {
   return false;
 }
 
-export function detectPackageManager(root, options) {
+export function detectPackageManager(root, options):
+  SupportedPackageManagers | undefined {
   // If user specified a package manager let's use it.
   if (options.packageManager) {
     return options.packageManager;

@@ -58,7 +58,8 @@ export function loadPlugin(packageManager: SupportedPackageManagers,
   }
 }
 
-export function getPluginOptions(packageManager: string, options: types.Options): types.Options {
+export function getPluginOptions(packageManager: SupportedPackageManagers, options: types.Options):
+  types.Options {
   const pluginOptions: types.Options = {};
   switch (packageManager) {
     case 'gradle': {

@@ -16,6 +16,7 @@ import * as plugins from '../../lib/plugins';
 import {ModuleInfo} from '../../lib/module-info';
 import * as docker from '../../lib/docker-promotion';
 import {SingleDepRootResult, MultiDepRootsResult, isMultiResult, MonitorError } from '../../lib/types';
+import {SupportedPackageManagers} from '../../lib/package-managers';
 
 const SEPARATOR = '\n-------------------------------------------------------\n';
 
@@ -83,7 +84,7 @@ async function monitor(...args0: any[]): Promise<any> {
           '"' + path + '" is not a valid path for "snyk monitor"');
       }
 
-      let packageManager = detect.detectPackageManager(path, options);
+      let packageManager: SupportedPackageManagers = detect.detectPackageManager(path, options);
 
       const targetFile = options.docker && !options.file // snyk monitor --docker (without --file)
         ? undefined
@@ -230,7 +231,8 @@ async function monitor(...args0: any[]): Promise<any> {
 }
 
 function formatMonitorOutput(
-    packageManager, res, manageUrl, options, subProjectName?: string, advertiseSubprojectsCount?: number|null,
+    packageManager: SupportedPackageManagers, res, manageUrl, options,
+    subProjectName?: string, advertiseSubprojectsCount?: number|null,
   ) {
   const issues = res.licensesPolicy ? 'issues' : 'vulnerabilities';
   const humanReadableName = subProjectName ? `${res.path} (${subProjectName})` : res.path;
