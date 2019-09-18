@@ -4,7 +4,7 @@
     {
       "//": "adds a file to identify a build as a standalone binary",
       "path": "@semantic-release/exec",
-      "cmd": "touch dist/STANDALONE"
+      "cmd": "echo '' > dist/STANDALONE"
     },
     {
       "//": "build the alpine, macos, linux and windows binaries",
