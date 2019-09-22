@@ -18,7 +18,7 @@ export async function tryGetSpec(dir: string, name: string): Promise<File | null
   if (await fs.exists(filePath)) {
     return {
       name,
-      contents: new Buffer(await fs.readFile(filePath)).toString('base64'),
+      contents: Buffer.from(await fs.readFile(filePath)).toString('base64'),
     };
   }
   return null;

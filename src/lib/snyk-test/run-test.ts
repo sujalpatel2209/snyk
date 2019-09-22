@@ -296,12 +296,6 @@ async function assembleLocalPayloads(root, options: Options & TestOptions): Prom
         }
       }
 
-      if (_.get(pkg, 'files.gemfileLock.contents')) {
-        const gemfileLockBase64 = pkg.files.gemfileLock.contents;
-        const gemfileLockContents = Buffer.from(gemfileLockBase64, 'base64').toString();
-        pkg.dependencies = gemfileLockToDependencies(gemfileLockContents);
-      }
-
       let policyLocations: string[] = [options['policy-path'] || root];
       if (options.docker) {
         policyLocations = policyLocations.filter((loc) => {
