@@ -10,7 +10,7 @@ export function updateCheck() {
     return false;
   }
 
-  const standalonePath = p.join(__dirname, '../dist/', 'STANDALONE');
+  const standalonePath = p.join(__dirname, '../dist', 'STANDALONE');
   const isStandaloneBuild = fs.existsSync(standalonePath);
 
   if (isStandaloneBuild) {
